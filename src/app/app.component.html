@@ -1,0 +1,81 @@
+<div class="clinic-outcomes-app">
+  <!-- Header Section -->
+  <header class="header">
+    <div class="header-content">
+      <h1>Clinic Outcomes</h1>
+      <button class="print-btn" (click)="onPrint()">
+        🖨 Print
+      </button>
+    </div>
+
+    <!-- Time Period Buttons -->
+    <div class="period-buttons">
+      <button
+        *ngFor="let period of periods"
+        [class.active]="selectedPeriod === period"
+        (click)="onPeriodChange(period)"
+        class="period-btn">
+        {{period}} days
+      </button>
+    </div>
+  </header>
+
+  <!-- Info Section -->
+  <div class="info-section">
+    <p class="patient-info">
+      Showing {{clinicData.patientCount}} patients from last {{clinicData.reportingPeriod}} of available data from {{clinicData.dateRange}}
+    </p>
+    <p class="update-info">
+      Only patients with a minimum of 10 days of SG data are included. Last updated on {{clinicData.lastUpdated}}
+    </p>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="charts-grid">
+    <!-- Left: Time in Range Charts -->
+    <div class="chart-container">
+      <h3>Time in range
+        <span class="info-icon" tabindex="0" aria-label="Info" (mouseenter)="showTooltip=true" (mouseleave)="showTooltip=false" (focus)="showTooltip=true" (blur)="showTooltip=false">ⓘ</span>
+        <div class="info-tooltip" *ngIf="showTooltip">
+          Based on standard of care ranges for Time in range.
+        </div>
+      </h3>
+
+      <!-- Top: Vertical Stacked Bar with Side Labels -->
+      <div class="time-range-vertical">
+        <canvas id="timeInRangeVerticalStacked"></canvas>
+      </div>
+
+      <!-- Bottom: Horizontal Scale Bar -->
+      <div class="time-range-horizontal-scale">
+        <canvas id="timeInRangeHorizontalScale"></canvas>
+        <div class="scale-legend">mg/dL</div>
+      </div>
+    </div>
+
+    <!-- Top Right: GMI Pie Chart -->
+    <div class="chart-container">
+      <h3>Glucose Management Indicator (GMI)</h3>
+      <div class="gmi-average">
+        <div class="average-label">AVERAGE GMI</div>
+        <div class="average-value">{{clinicData.gmi.average}}%</div>
+      </div>
+      <canvas id="gmiPieChart"></canvas>
+
+      <!-- Horizontal GMI Bar Below Pie Chart -->
+      <div class="gmi-horizontal-bar">
+        <div class="gmi-bar-labels">
+          <span>≤7%</span>
+          <span>7-8%</span>
+          <span>≥8%</span>
+        </div>
+        <div class="gmi-bar-container">
+          <div class="gmi-bar-segment green"></div>
+          <div class="gmi-bar-segment yellow"></div>
+          <div class="gmi-bar-segment red"></div>
+        </div>
+        <div class="gmi-bar-legend">GMI (%)</div>
+      </div>
+    </div>
+  </div>
+</div>
