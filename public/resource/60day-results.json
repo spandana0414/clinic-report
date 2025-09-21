@@ -1,0 +1,19 @@
+{
+    "patientCount": 185,
+    "reportingPeriod": "60 days",
+    "dateRange": "01/01/2024 - 02/29/2024",
+    "lastUpdated": "03/02/2024, 2:15 PM",
+    "timeInRange": {
+        "inRange": 84,
+        "aboveRange": 13,
+        "belowRange": 3
+    },
+    "gmi": {
+        "average": 6.5,
+        "distribution": {
+            "optimal": 76,
+            "suboptimal": 20,
+            "poor": 4
+        }
+    }
+}
