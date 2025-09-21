@@ -1,28 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { ClinicReportsService, ClinicData } from '../clinic-reports.service';
 
 Chart.register(...registerables);
-
-interface ClinicData {
-  patientCount: number;
-  reportingPeriod: string;
-  dateRange: string;
-  lastUpdated: string;
-  timeInRange: {
-    inRange: number;
-    aboveRange: number;
-    belowRange: number;
-  };
-  gmi: {
-    average: number;
-    distribution: {
-      optimal: number;
-      suboptimal: number;
-      poor: number;
-    };
-  };
-}
 
 @Component({
   selector: 'app-root',
@@ -48,10 +29,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private charts: Chart[] = [];
 
+  constructor(private clinicReportsService: ClinicReportsService) {}
+
   ngOnInit() {
-    setTimeout(() => {
-      this.initializeCharts();
-    }, 100);
+    // Load initial data for the selected period
+    this.loadClinicData(this.selectedPeriod);
   }
 
   ngOnDestroy() {
@@ -60,7 +42,35 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onPeriodChange(period: number) {
     this.selectedPeriod = period;
-    this.clinicData.reportingPeriod = `${period} days`;
+    console.log("selected period:", this.selectedPeriod);
+    this.loadClinicData(period);
+  }
+
+  /**
+   * Load clinic data for the specified period
+   * @param period - The time period (30, 60, or 90 days)
+   */
+  private loadClinicData(period: number) {
+    this.clinicReportsService.getClinicDataByPeriod(period).subscribe({
+      next: (data: ClinicData) => {
+        this.clinicData = data;
+        console.log(`Loaded data for ${period} days:`, data);
+        
+        // Destroy existing charts before creating new ones
+        this.charts.forEach(chart => chart.destroy());
+        this.charts = [];
+        
+        // Reinitialize charts with new data
+        setTimeout(() => {
+          this.initializeCharts();
+        }, 100);
+      },
+      error: (error) => {
+        console.error(`Error loading clinic data for ${period} days:`, error);
+        // Keep existing data or set default
+        this.clinicData.reportingPeriod = `${period} days`;
+      }
+    });
   }
 
   onPrint() {
